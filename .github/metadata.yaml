@@ -1,0 +1,11 @@
+# .github/metadata.yaml
+description: "Serializer and parser for RFC 3501 (IMAP4rev1): commands to bytes, a byte stream to complete responses, and responses to values."
+topics:
+  - standards
+  - rfc
+  - rfc-3501
+  - imap
+  - parser
+homepage: "https://swift-institute.org"
+readme:
+  family: E
