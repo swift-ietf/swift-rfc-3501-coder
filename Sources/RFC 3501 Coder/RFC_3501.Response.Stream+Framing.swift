@@ -20,8 +20,8 @@ extension RFC_3501.Response.Stream {
             guard let lineFeed = bytes[position...].firstIndex(of: 0x0A) else { return nil }
             let lineEnd = lineFeed > position && bytes[lineFeed - 1] == 0x0D ? lineFeed - 1 : lineFeed
             guard let count = literal(bytes[position..<lineEnd]) else { return lineFeed + 1 }
+            guard count <= bytes.endIndex - lineFeed - 1 else { return nil }
             let literalEnd = lineFeed + 1 + count
-            guard literalEnd <= bytes.endIndex else { return nil }
             position = literalEnd
         }
         return nil

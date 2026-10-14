@@ -143,3 +143,11 @@ extension RFC_3501.Response.Test.`Edge Case` {
         #expect(try RFC_3501.Response.Test.parse("* ID NIL\r\n") == .untagged(.other("ID NIL")))
     }
 }
+
+@Suite struct `Search boundaries` {
+    @Test func `invalid identifiers are not silently dropped`() {
+        #expect(throws: RFC_3501.Response.Error.self) {
+            _ = try RFC_3501.Response(binary: [Byte](utf8: "* SEARCH 1 broken 2\r\n"))
+        }
+    }
+}

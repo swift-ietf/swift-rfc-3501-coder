@@ -89,3 +89,16 @@ extension RFC_3501.Command.Test.`Edge Case` {
         }
     }
 }
+
+@Suite struct `Command boundaries` {
+    @Test func `header fields cannot inject a second command`() {
+        #expect(throws: RFC_3501.Command.Error.self) {
+            _ = try [Byte](.fetch(uid: true, RFC_3501.SequenceSet([1]), [.body(.headerFields(["FROM) ]\r\nZ STORE 1 +FLAGS (test)"]), peek: true)]), tag: RFC_3501.Tag(rawValue: "A"))
+        }
+    }
+    @Test func `tags cannot inject a second command`() {
+        #expect(throws: RFC_3501.Command.Error.self) {
+            _ = try [Byte](.noop, tag: RFC_3501.Tag(rawValue: "A\r\nB"))
+        }
+    }
+}

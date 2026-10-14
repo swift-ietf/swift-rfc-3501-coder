@@ -80,7 +80,12 @@ extension RFC_3501.Response.Scanner {
             case "LIST", "LSUB":
                 return .list(try list())
             case "SEARCH":
-                return .search(rest().split(separator: " ").compactMap { UInt32($0) })
+                let words = rest().split(separator: " ")
+                let numbers = words.compactMap { UInt32($0) }
+                guard numbers.count == words.count, numbers.allSatisfy({ $0 > 0 }) else {
+                    throw .malformed("invalid SEARCH identifiers")
+                }
+                return .search(numbers)
             default:
                 return .other(word + " " + rest())
             }
