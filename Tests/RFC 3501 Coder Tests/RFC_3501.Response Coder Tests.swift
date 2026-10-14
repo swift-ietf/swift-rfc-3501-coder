@@ -144,7 +144,7 @@ extension RFC_3501.Response.Test.`Edge Case` {
     }
 }
 
-@Suite struct `Search boundaries` {
+extension RFC_3501.Response.Test.`Edge Case` {
     @Test func `invalid identifiers are not silently dropped`() {
         #expect(throws: RFC_3501.Response.Error.self) {
             _ = try RFC_3501.Response(binary: [Byte](utf8: "* SEARCH 1 broken 2\r\n"))
