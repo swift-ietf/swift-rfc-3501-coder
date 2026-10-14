@@ -115,7 +115,8 @@ extension RFC_3501.Response.Scanner {
         return words
     }
 
-    mutating func value() throws(RFC_3501.Response.Error) -> [UInt8] {
+    mutating func value(depth: Int = 0) throws(RFC_3501.Response.Error) -> [UInt8] {
+        guard depth < 128 else { throw .malformed("value nesting limit") }
         let start = position
         switch current {
         case 0x28:
@@ -123,7 +124,7 @@ extension RFC_3501.Response.Scanner {
             spaces()
             while current != 0x29 {
                 guard current != nil else { throw .malformed("unterminated list") }
-                _ = try value()
+                _ = try value(depth: depth + 1)
                 spaces()
             }
             position += 1

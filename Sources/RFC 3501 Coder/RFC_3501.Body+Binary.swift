@@ -21,15 +21,15 @@ extension RFC_3501.Response.Scanner {
                 parts.append(try body(depth: depth + 1))
                 spaces()
             }
-            let subtype = try bodyString()
+            let subtype = try bodyString().lowercased()
             spaces()
             let parameters = current == 0x29 ? [:] : try bodyParameters()
             try bodyEnd()
             return .init(type: "multipart", subtype: subtype, parameters: parameters, parts: parts)
         }
-        let type = try bodyString()
+        let type = try bodyString().lowercased()
         try expect(0x20)
-        let subtype = try bodyString()
+        let subtype = try bodyString().lowercased()
         try expect(0x20)
         var parameters = try bodyParameters()
         for _ in 0..<3 { try expect(0x20); _ = try nstring() }
@@ -68,7 +68,7 @@ extension RFC_3501.Response.Scanner {
 
     mutating func bodyString() throws(RFC_3501.Response.Error) -> String {
         guard let bytes = try nstring() else { throw .malformed("missing body string") }
-        return String(decoding: bytes, as: UTF8.self).lowercased()
+        return String(decoding: bytes, as: UTF8.self)
     }
 
     mutating func bodyParameters() throws(RFC_3501.Response.Error) -> [String: String] {
@@ -79,7 +79,7 @@ extension RFC_3501.Response.Scanner {
         try expect(0x28)
         var result: [String: String] = [:]
         while current != 0x29 {
-            let name = try bodyString()
+            let name = try bodyString().lowercased()
             try expect(0x20)
             result[name] = try bodyString()
             spaces()

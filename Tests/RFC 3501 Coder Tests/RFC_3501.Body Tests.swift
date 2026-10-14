@@ -9,7 +9,7 @@ extension RFC_3501.Body {
             let body = try RFC_3501.Body(binary: [Byte](utf8: #"(("TEXT" "PLAIN" NIL NIL NIL "7BIT" 4 1)("APPLICATION" "OCTET-STREAM" NIL NIL NIL "BASE64" 8 NIL ("ATTACHMENT" ("FILENAME" "invoice.PDF"))) "MIXED")"#))
             #expect(body.type == "multipart")
             #expect(body.parts.count == 2)
-            #expect(body.parts.last?.parameters["filename"] == "invoice.pdf")
+            #expect(body.parts.last?.parameters["filename"] == "invoice.PDF")
         }
         @Test func `a subject containing PDF is not a PDF part`() throws {
             let body = try RFC_3501.Body(binary: [Byte](utf8: #"("TEXT" "PLAIN" NIL NIL "invoice.pdf" "7BIT" 4 1)"#))
