@@ -18,9 +18,10 @@ extension RFC_3501.Grammar {
     }
 
     static func quoted(_ value: String) -> String {
-        "\"" + value.reduce(into: "") { result, character in
-            result += character == "\"" || character == "\\" ? "\\\(character)" : String(character)
-        } + "\""
+        "\""
+            + value.reduce(into: "") { result, character in
+                result += character == "\"" || character == "\\" ? "\\\(character)" : String(character)
+            } + "\""
     }
 
     static let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]

@@ -32,7 +32,10 @@ extension RFC_3501.Response.Scanner {
         let subtype = try bodyString().lowercased()
         try expect(0x20)
         var parameters = try bodyParameters()
-        for _ in 0..<3 { try expect(0x20); _ = try nstring() }
+        for _ in 0..<3 {
+            try expect(0x20)
+            _ = try nstring()
+        }
         try expect(0x20)
         _ = try number()
         var parts: [RFC_3501.Body] = []

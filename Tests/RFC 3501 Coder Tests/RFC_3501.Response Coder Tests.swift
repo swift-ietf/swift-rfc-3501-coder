@@ -43,26 +43,36 @@ extension RFC_3501.Response.Test.Unit {
 
     @Test
     func `a tagged completion parses`() throws {
-        #expect(try RFC_3501.Response.Test.parse("A1 OK [READ-ONLY] EXAMINE completed\r\n")
-            == .tagged(.init(rawValue: "A1"), .init(status: .ok, code: .readOnly, text: "EXAMINE completed")))
-        #expect(try RFC_3501.Response.Test.parse("A2 NO login failed\r\n")
-            == .tagged(.init(rawValue: "A2"), .init(status: .no, code: nil, text: "login failed")))
+        #expect(
+            try RFC_3501.Response.Test.parse("A1 OK [READ-ONLY] EXAMINE completed\r\n")
+                == .tagged(.init(rawValue: "A1"), .init(status: .ok, code: .readOnly, text: "EXAMINE completed"))
+        )
+        #expect(
+            try RFC_3501.Response.Test.parse("A2 NO login failed\r\n")
+                == .tagged(.init(rawValue: "A2"), .init(status: .no, code: nil, text: "login failed"))
+        )
     }
 
     @Test
     func `mailbox data parses`() throws {
         #expect(try RFC_3501.Response.Test.parse("* 23 EXISTS\r\n") == .untagged(.exists(23)))
-        #expect(try RFC_3501.Response.Test.parse("* OK [UIDVALIDITY 3857529045] UIDs valid\r\n")
-            == .untagged(.condition(.init(status: .ok, code: .uidValidity(3857529045), text: "UIDs valid"))))
+        #expect(
+            try RFC_3501.Response.Test.parse("* OK [UIDVALIDITY 3857529045] UIDs valid\r\n")
+                == .untagged(.condition(.init(status: .ok, code: .uidValidity(3_857_529_045), text: "UIDs valid")))
+        )
         #expect(try RFC_3501.Response.Test.parse("* FLAGS (\\Answered \\Seen)\r\n") == .untagged(.flags(["\\Answered", "\\Seen"])))
     }
 
     @Test
     func `list responses parse quoted and atom mailboxes`() throws {
-        #expect(try RFC_3501.Response.Test.parse("* LIST (\\HasNoChildren) \"/\" \"Sent Messages\"\r\n")
-            == .untagged(.list(.init(attributes: ["\\HasNoChildren"], delimiter: "/", mailbox: .init(rawValue: "Sent Messages")))))
-        #expect(try RFC_3501.Response.Test.parse("* LIST () NIL INBOX\r\n")
-            == .untagged(.list(.init(attributes: [], delimiter: nil, mailbox: .inbox))))
+        #expect(
+            try RFC_3501.Response.Test.parse("* LIST (\\HasNoChildren) \"/\" \"Sent Messages\"\r\n")
+                == .untagged(.list(.init(attributes: ["\\HasNoChildren"], delimiter: "/", mailbox: .init(rawValue: "Sent Messages"))))
+        )
+        #expect(
+            try RFC_3501.Response.Test.parse("* LIST () NIL INBOX\r\n")
+                == .untagged(.list(.init(attributes: [], delimiter: nil, mailbox: .inbox)))
+        )
     }
 
     @Test
@@ -75,12 +85,20 @@ extension RFC_3501.Response.Test.Unit {
     func `a fetch with a literal body parses`() throws {
         let response = try RFC_3501.Response.Test.parse("* 12 FETCH (UID 4827 RFC822.SIZE 12 BODY[] {12}\r\nSubject: x\r\n FLAGS (\\Seen))\r\n")
 
-        #expect(response == .untagged(.fetch(12, [
-            .uid(4827),
-            .rfc822Size(12),
-            .body(.whole, origin: nil, data: [Byte](utf8: "Subject: x\r\n")),
-            .flags(["\\Seen"]),
-        ])))
+        #expect(
+            response
+                == .untagged(
+                    .fetch(
+                        12,
+                        [
+                            .uid(4827),
+                            .rfc822Size(12),
+                            .body(.whole, origin: nil, data: [Byte](utf8: "Subject: x\r\n")),
+                            .flags(["\\Seen"]),
+                        ]
+                    )
+                )
+        )
     }
 
     @Test
@@ -94,10 +112,18 @@ extension RFC_3501.Response.Test.Unit {
     func `unknown fetch items are kept raw`() throws {
         let response = try RFC_3501.Response.Test.parse("* 1 FETCH (ENVELOPE (NIL \"subject\" ((NIL NIL \"a\" \"b\"))) UID 3)\r\n")
 
-        #expect(response == .untagged(.fetch(1, [
-            .other("ENVELOPE", [Byte](utf8: "(NIL \"subject\" ((NIL NIL \"a\" \"b\")))")),
-            .uid(3),
-        ])))
+        #expect(
+            response
+                == .untagged(
+                    .fetch(
+                        1,
+                        [
+                            .other("ENVELOPE", [Byte](utf8: "(NIL \"subject\" ((NIL NIL \"a\" \"b\")))")),
+                            .uid(3),
+                        ]
+                    )
+                )
+        )
     }
 
     @Test

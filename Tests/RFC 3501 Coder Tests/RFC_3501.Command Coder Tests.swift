@@ -64,8 +64,11 @@ extension RFC_3501.Command.Test.Unit {
     @Test
     func `a UID fetch serializes its set and attributes`() throws {
         let line = try RFC_3501.Command.Test.line(
-            .fetch(uid: true, RFC_3501.SequenceSet(ranges: [.init(lower: 1, upper: 5), .init(lower: 9, upper: 9), .init(lower: 20, upper: nil)]),
-                   [.uid, .rfc822Size, .body(.headerFields(["FROM", "SUBJECT"]), peek: true)])
+            .fetch(
+                uid: true,
+                RFC_3501.SequenceSet(ranges: [.init(lower: 1, upper: 5), .init(lower: 9, upper: 9), .init(lower: 20, upper: nil)]),
+                [.uid, .rfc822Size, .body(.headerFields(["FROM", "SUBJECT"]), peek: true)]
+            )
         )
 
         #expect(line == "A1 UID FETCH 1:5,9,20:* (UID RFC822.SIZE BODY.PEEK[HEADER.FIELDS (FROM SUBJECT)])\r\n")
